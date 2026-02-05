@@ -1,6 +1,7 @@
 package com.geolocation.locator.generator;
 
 import org.locationtech.jts.geom.*;
+import org.locationtech.jts.geom.util.GeometryFixer;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
@@ -190,6 +191,11 @@ public class JosmCountryBoundariesReader
 					g = g.getGeometryN(0);
 				}
 			}
+
+			if(!g.isValid()){
+				g = GeometryFixer.fix(g);
+			}
+
 			g.normalize();
 			g.setUserData(Collections.singletonMap("id", poly.name));
 			geometries.add(g);

@@ -1,7 +1,6 @@
 package com.geolocation.locator.controller;
 
 import com.geolocation.locator.service.SerFileGenerator;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.util.List;
-import java.util.logging.Filter;
 
 @RestController
 public class LocatorController {
@@ -39,24 +37,20 @@ public class LocatorController {
         File tempFile = File.createTempFile("upload", null);
         file.transferTo(tempFile);
 
-        byte[] serData = fileGenerator.fileGenerate(new FileInputStream(tempFile), width, height);
+        String result = fileGenerator.fileGenerate(new FileInputStream(tempFile), width, height);
 
-        if(serData == null || serData.length < 10){
+        if(result == null){
             return ResponseEntity.internalServerError().build();
         }
 
-        return ResponseEntity.ok().body("DONE");
-//                .header(HttpHeaders.CONTENT_DISPOSITION, "attachement; filename=\"boundaries_gen.ser\"")
-//                .header(HttpHeaders.CONTENT_LENGTH, String.valueOf(serData.length))
-//                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-//                .body(serData);
+        return ResponseEntity.ok().body(result);
     }
 
     @GetMapping(path = "/getlocation")
     public ResponseEntity<List<String>> getLocation(@RequestParam(name = "latitude") double latitude, @RequestParam(name = "longitude") double longitude){
         CountryBoundaries countryBoundaries = null;
 
-        try(InputStream fis = getClass().getClassLoader().getResourceAsStream("boundaries/boundaries.ser")){
+        try(InputStream fis = getClass().getClassLoader().getResourceAsStream("boundaries/boundariestest.ser")){
             if(fis == null){
                 throw new FileNotFoundException("Resource not found: boundaries.ser");
             }

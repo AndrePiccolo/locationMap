@@ -14,7 +14,7 @@ import java.util.*;
 @Service
 public class SerFileGenerator {
 
-    public byte[] fileGenerate(FileInputStream inputStream, int width, int height) throws IOException {
+    public String fileGenerate(FileInputStream inputStream, int width, int height) throws IOException {
         GeometryCollection geometries =  new JosmCountryBoundariesReader().read(new InputStreamReader(inputStream, "UTF-8"));;
 
         Set<String> excludeCountries = new HashSet<>();
@@ -57,8 +57,6 @@ public class SerFileGenerator {
             new CountryBoundariesSerializer().write(boundaries, dos);
         }
 
-//        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-
-        return null;
+        return "Process completed";
     }
 }

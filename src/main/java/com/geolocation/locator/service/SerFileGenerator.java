@@ -1,7 +1,9 @@
 package com.geolocation.locator.service;
 
 import com.geolocation.locator.generator.CountryBoundariesSerializer;
+import com.geolocation.locator.generator.GeoJsonReader;
 import com.geolocation.locator.generator.JosmCountryBoundariesReader;
+
 import com.geolocation.locator.countryboundaries.CountryBoundaries;
 import org.locationtech.jts.geom.GeometryCollection;
 import org.locationtech.jts.geom.Geometry;
@@ -14,8 +16,22 @@ import java.util.*;
 @Service
 public class SerFileGenerator {
 
-    public String fileGenerate(FileInputStream inputStream, int width, int height) throws IOException {
-        GeometryCollection geometries =  new JosmCountryBoundariesReader().read(new InputStreamReader(inputStream, "UTF-8"));;
+    public String fileGenerate(FileInputStream inputStream, int width, int height, boolean isJson) throws IOException {
+
+        GeometryCollection geometries;
+
+        if(isJson){
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = inputStream.read(buffer)) != -1)
+            {
+                baos.write(buffer, 0, length);
+            }
+            geometries = (GeometryCollection) new GeoJsonReader().read(baos.toString("UTF-8"));
+        }else{
+            geometries =  new JosmCountryBoundariesReader().read(new InputStreamReader(inputStream, "UTF-8"));
+        }
 
         Set<String> excludeCountries = new HashSet<>();
         excludeCountries.add("FX");

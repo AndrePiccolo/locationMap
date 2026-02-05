@@ -37,7 +37,8 @@ public class LocatorController {
         File tempFile = File.createTempFile("upload", null);
         file.transferTo(tempFile);
 
-        String result = fileGenerator.fileGenerate(new FileInputStream(tempFile), width, height);
+        String result = fileGenerator.fileGenerate(new FileInputStream(tempFile), width, height,
+                file.getOriginalFilename().endsWith(".json") || file.getOriginalFilename().endsWith(".geojson"));
 
         if(result == null){
             return ResponseEntity.internalServerError().build();
